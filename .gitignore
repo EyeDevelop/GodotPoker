@@ -34,3 +34,5 @@
 # Godot imports
 *.import
 .import/
+.idea/
+*build*/
