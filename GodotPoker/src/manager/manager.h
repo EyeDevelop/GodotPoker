@@ -22,6 +22,8 @@ public:
     static double do_turn(std::vector<Player*> &active_players);
 
     void start_game();
+
+    Player& check_win(std::vector<Player*> &active_players, std::vector<Card> &board_cards);
 };
 
 
