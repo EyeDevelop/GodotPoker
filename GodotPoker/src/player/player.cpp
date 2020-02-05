@@ -58,12 +58,12 @@ double Player::make_play(double current_pot) {
     }
     std::cout << std::endl;
 
-    char option;
-    std::cout << "Do you wish to (F)old, (C)heck or (R)aise: ";
+    std::string option;
+    std::cout << "Do you wish to (F)old, (C)heck/call or (R)aise: ";
     std::cin >> option;
 
     double raiseAmount = 0;
-    switch(option) {
+    switch(option.at(0)) {
         case 'f':
         case 'F':
             return -2;
@@ -93,7 +93,8 @@ double Player::make_play(double current_pot) {
             }
 
         default:
-            return -1;
+            std::cerr << "That's not a valid option." << std::endl;
+            return make_play(current_pot);
     }
 }
 

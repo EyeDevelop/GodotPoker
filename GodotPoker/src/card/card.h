@@ -43,6 +43,8 @@ public:
 
     bool operator==(Card const &other) const;
 
+    bool operator<(Card const &other) const;
+
     Suit get_suit();
 
     Rank get_rank();
@@ -53,17 +55,21 @@ public:
 
     [[nodiscard]] std::string to_string() const;
 
-    static Card generate_random() {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> suit_distribution(0, CLOVERS);
-        std::uniform_int_distribution<> rank_distribution(0, ACE);
+    static Card generate_random();
 
-        Suit s = static_cast<Suit>(suit_distribution(gen));
-        Rank r = static_cast<Rank>(rank_distribution(gen));
+    static bool same_suit(std::vector<Card> &cards);
 
-        return Card{s, r};
-    }
+    static bool same_rank(std::vector<Card> &cards);
+
+    static int count_suit(std::vector<Card> &cards, Suit s);
+
+    static int count_rank(std::vector<Card> &cards, Rank r);
+
+    static int get_max_suit_count(std::vector<Card> &cards);
+
+    static int get_max_rank_count(std::vector<Card> &cards);
+
+    static std::vector<Rank> get_pairs(std::vector<Card> &cards);
 };
 
 #endif //GODOTPOKER_CARD_H

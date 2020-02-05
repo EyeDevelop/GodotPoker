@@ -19,11 +19,11 @@ public:
 
     void remove_player(Player const &p);
 
-    static double do_turn(std::vector<Player*> &active_players);
+    static double do_turn(std::vector<Player *> &active_players);
 
     void start_game();
 
-    Player& check_win(std::vector<Player*> &active_players, std::vector<Card> &board_cards);
+    static std::vector<Player *> check_win(std::vector<Player *> &active_players, std::vector<Card> &board_cards);
 };
 
 
