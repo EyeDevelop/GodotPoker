@@ -15,15 +15,15 @@ class Manager {
     Deck deck;
 
 public:
-    void add_player(Player const &p);
+    void add_player(Player const &p) noexcept;
 
-    void remove_player(Player const &p);
+    void remove_player(Player const &p) noexcept;
 
-    static double do_turn(std::vector<Player *> &active_players);
+    static double do_turn(std::vector<Player> &active_players) noexcept;
 
-    void start_game();
+    void start_game() noexcept;
 
-    static std::vector<Player *> check_win(std::vector<Player *> &active_players, std::vector<Card> &board_cards);
+    static std::vector<Player> check_win(std::vector<Player> &active_players, std::vector<Card> &board_cards) noexcept;
 };
 
 

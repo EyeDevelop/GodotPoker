@@ -6,18 +6,18 @@
 #include <iostream>
 #include "manager.h"
 
-void Manager::add_player(Player const &p) {
+void Manager::add_player(Player const &p) noexcept {
     this->players.emplace_back(p);
 }
 
-void Manager::remove_player(Player const &p) {
+void Manager::remove_player(Player const &p) noexcept {
     this->players.erase(std::find(this->players.begin(), this->players.end(), p));
 }
 
-double Manager::do_turn(std::vector<Player *> &active_players) {
+double Manager::do_turn(std::vector<Player> &active_players) noexcept {
     double pot_delta = 0;
-    for (Player *p : active_players) {
-        double ret = p->make_play(pot_delta);
+    for (Player &p : active_players) {
+        double ret = p.make_play(pot_delta);
         if (ret == -2)
             active_players.erase(std::find(active_players.begin(), active_players.end(), p));
         else if (ret > 0)
@@ -27,7 +27,7 @@ double Manager::do_turn(std::vector<Player *> &active_players) {
     return pot_delta;
 }
 
-void Manager::start_game() {
+void Manager::start_game() noexcept {
     for (Player &p : players) {
         p.set_in_game();
         p.give_card(this->deck.next_card());
@@ -36,9 +36,9 @@ void Manager::start_game() {
 
     int turnCount = 0;
     double pot = 0;
-    std::vector<Player *> active_players;
-    for (Player &p : this->players) {
-        active_players.emplace_back(&p);
+    std::vector<Player> active_players;
+    for (Player const &p : this->players) {
+        active_players.emplace_back(p);
     }
 
     std::vector<Card> board_cards;
@@ -70,14 +70,14 @@ void Manager::start_game() {
     }
 
     if (active_players.size() == 1) {
-        std::cout << "The winner is: " << active_players[0]->get_name() << std::endl;
-        active_players[0]->add_funds(pot);
+        std::cout << "The winner is: " << active_players[0].get_name() << std::endl;
+        active_players[0].add_funds(pot);
     } else {
-        std::vector<Player*> winners = check_win(active_players, board_cards);
+        std::vector<Player> winners = check_win(active_players, board_cards);
         std::cout << "The winners are: " << std::endl;
-        for (Player *p : winners) {
-            std::cout << "- " << p->get_name() << std::endl;
-            p->add_funds(pot / winners.size());
+        for (Player &p : winners) {
+            std::cout << "- " << p.get_name() << std::endl;
+            p.add_funds(pot / winners.size());
         }
     }
 
@@ -85,10 +85,10 @@ void Manager::start_game() {
         p.reset_in_game();
 }
 
-int getCombination(Player *p, std::vector<Card> &board_cards) {
+int getCombination(Player const &p, std::vector<Card> &board_cards) {
     std::vector<Card> combinationCards = board_cards;
-    combinationCards.emplace_back(p->get_cards()[0]);
-    combinationCards.emplace_back(p->get_cards()[1]);
+    combinationCards.emplace_back(p.get_cards()[0]);
+    combinationCards.emplace_back(p.get_cards()[1]);
     std::sort(combinationCards.begin(), combinationCards.end());
 
     int best = 0;
@@ -140,17 +140,17 @@ int getCombination(Player *p, std::vector<Card> &board_cards) {
         if (200 + pairs[0] > best)
             best = 200 + pairs[0];
     } else {
-        best = std::max(p->get_cards()[0].get_rank(), p->get_cards()[1].get_rank());
+        best = std::max(p.get_cards()[0].get_rank(), p.get_cards()[1].get_rank());
     }
 
     return best;
 }
 
-std::vector<Player*> Manager::check_win(std::vector<Player *> &active_players, std::vector<Card> &board_cards) {
-    std::vector<Player*> winners;
+std::vector<Player> Manager::check_win(std::vector<Player> &active_players, std::vector<Card> &board_cards) noexcept {
+    std::vector<Player> winners;
     int highestScore = 0;
 
-    for (Player *p : active_players) {
+    for (Player const &p : active_players) {
         int score = getCombination(p, board_cards);
         if (score == highestScore)
             winners.emplace_back(p);

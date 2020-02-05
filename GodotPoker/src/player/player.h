@@ -16,27 +16,27 @@ class Player {
     std::string name;
 
 public:
-    explicit Player(std::string name);
+    explicit Player(std::string name) noexcept;
 
-    Player(std::string name, double start_funds);
+    Player(std::string name, double start_funds) noexcept;
 
-    bool operator==(Player const &p) const;
+    bool operator==(Player const &p) const noexcept;
 
-    double get_funds();
+    [[nodiscard]] double get_funds() const noexcept;
 
-    std::string get_name();
+    [[nodiscard]] std::string get_name() const noexcept;
 
-    double add_funds(double to_add);
+    double add_funds(double to_add) noexcept;
 
-    std::vector<Card> get_cards();
+    [[nodiscard]] std::vector<Card> get_cards() const noexcept;
 
-    void give_card(Card c);
+    void give_card(Card c) noexcept;
 
-    void set_in_game();
+    void set_in_game() noexcept;
 
-    void reset_in_game();
+    void reset_in_game() noexcept;
 
-    double make_play(double current_pot);
+    double make_play(double current_pot) noexcept;
 };
 
 

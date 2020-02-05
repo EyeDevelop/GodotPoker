@@ -6,11 +6,11 @@
 #include <array>
 #include <algorithm>
 
-Deck::Deck() {
+Deck::Deck() noexcept {
     this->reset();
 }
 
-void Deck::reset() {
+void Deck::reset() noexcept {
     std::vector<Card> possible_combinations;
     for (int i = 0; i <= CLOVERS; i++) {
         for (int j = 0; j <= ACE; j++) {
@@ -32,20 +32,20 @@ void Deck::reset() {
     }
 }
 
-bool Deck::contains(Card const& a) const {
+bool Deck::contains(Card const& a) const noexcept {
     return std::find(cards.begin(), cards.end(), a) != cards.end();
 }
 
-void Deck::remove(Card const& a) {
+void Deck::remove(Card const& a) noexcept {
     cards.erase(std::find(cards.begin(), cards.end(), a));
 }
 
-Card Deck::next_card() {
+Card Deck::next_card() noexcept {
     Card ret = this->cards.back();
     this->cards.pop_back();
     return ret;
 }
 
-std::vector<Card> const& Deck::get_cards() {
+std::vector<Card> const& Deck::get_cards() noexcept {
     return cards;
 }
