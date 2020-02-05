@@ -44,8 +44,9 @@ double Player::make_play() {
         return -1;
     }
 
+    std::cout << "Your funds: " << this->funds << std::endl;
     std::cout << "Your cards: ";
-    for (const Card c : this->cards) {
+    for (const Card &c : this->cards) {
         std::cout << c.to_string() << " ";
     }
     std::cout << std::endl;
@@ -68,7 +69,8 @@ double Player::make_play() {
         case 'R':
             std::cout << "Raise by how much: ";
             std::cin >> raiseAmount;
-            if (raiseAmount > 0) {
+            if (raiseAmount > 0 && this->funds - raiseAmount > 0) {
+                this->funds -= raiseAmount;
                 return raiseAmount;
             } else {
                 return make_play();

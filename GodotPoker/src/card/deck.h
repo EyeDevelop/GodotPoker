@@ -23,7 +23,7 @@ public:
 
     Card next_card();
 
-    std::vector<Card> get_cards();
+    std::vector<Card> const& get_cards();
 };
 
 #endif //GODOTPOKER_DECK_H

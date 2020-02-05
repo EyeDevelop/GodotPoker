@@ -19,7 +19,7 @@ public:
 
     void remove_player(Player const &p);
 
-    static double do_turn(std::vector<Player> *active_players);
+    static double do_turn(std::vector<Player*> &active_players);
 
     void start_game();
 };

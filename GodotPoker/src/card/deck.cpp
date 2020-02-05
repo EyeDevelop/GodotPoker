@@ -24,7 +24,7 @@ void Deck::reset() {
     std::random_device rd;
     std::mt19937 gen(rd());
     while (!possible_combinations.empty()) {
-        std::uniform_int_distribution<> combination_distribution(0, possible_combinations.size());
+        std::uniform_int_distribution<> combination_distribution(0, possible_combinations.size() - 1);
         int index = combination_distribution(gen);
 
         this->cards.emplace_back(possible_combinations[index]);
@@ -46,6 +46,6 @@ Card Deck::next_card() {
     return ret;
 }
 
-std::vector<Card> Deck::get_cards() {
+std::vector<Card> const& Deck::get_cards() {
     return cards;
 }
