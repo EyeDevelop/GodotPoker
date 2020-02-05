@@ -4,18 +4,25 @@
 
 #include <random>
 #include <iostream>
+#include <utility>
 #include "player.h"
 
-Player::Player() {
+Player::Player(std::string name) {
+    this->name = std::move(name);
     this->funds = 0;
 }
 
-Player::Player(double start_funds) {
+Player::Player(std::string name, double start_funds) {
+    this->name = std::move(name);
     this->funds = start_funds;
 }
 
 double Player::get_funds() {
     return this->funds;
+}
+
+std::string Player::get_name() {
+    return this->name;
 }
 
 double Player::add_funds(double to_add) {
@@ -39,7 +46,7 @@ void Player::set_in_game() {
     this->inGame = true;
 }
 
-double Player::make_play() {
+double Player::make_play(double current_pot) {
     if (!this->inGame) {
         return -1;
     }
@@ -63,17 +70,26 @@ double Player::make_play() {
 
         case 'c':
         case 'C':
-            return -3;
+            if (this->funds >= current_pot) {
+                this->funds -= current_pot;
+                return -3;
+            } else if (this->funds == 0) {  // All-In
+                return -3;
+            } else {
+                std::cerr << "You do not have enough funds." << std::endl;
+                return make_play(current_pot);
+            }
 
         case 'r':
         case 'R':
             std::cout << "Raise by how much: ";
             std::cin >> raiseAmount;
-            if (raiseAmount > 0 && this->funds - raiseAmount > 0) {
-                this->funds -= raiseAmount;
+            if (raiseAmount > 0 && this->funds >= raiseAmount + current_pot) {
+                this->funds -= raiseAmount + current_pot;
                 return raiseAmount;
             } else {
-                return make_play();
+                std::cerr << "You do not have enough funds." << std::endl;
+                return make_play(current_pot);
             }
 
         default:

@@ -13,15 +13,18 @@ class Player {
     double funds;
     std::vector<Card> cards;
     bool inGame = false;
+    std::string name;
 
 public:
-    Player();
+    explicit Player(std::string name);
 
-    explicit Player(double start_funds);
+    Player(std::string name, double start_funds);
 
     bool operator==(Player const &p) const;
 
     double get_funds();
+
+    std::string get_name();
 
     double add_funds(double to_add);
 
@@ -33,7 +36,7 @@ public:
 
     void reset_in_game();
 
-    double make_play();
+    double make_play(double current_pot);
 };
 
 
