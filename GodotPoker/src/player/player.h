@@ -9,6 +9,13 @@
 #include <vector>
 #include "../card/card.h"
 
+
+enum class Action : short {
+    CHECK = -3,
+    FOLD = -2,
+    NOT_IN_GAME = -1
+};
+
 class Player {
     double funds;
     std::vector<Card> cards;
@@ -16,9 +23,9 @@ class Player {
     std::string name;
 
 public:
-    explicit Player(std::string name) noexcept;
+    explicit Player(std::string_view name) noexcept;
 
-    Player(std::string name, double start_funds) noexcept;
+    Player(std::string_view name, double start_funds) noexcept;
 
     bool operator==(Player const &p) const noexcept;
 

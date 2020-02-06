@@ -5,31 +5,24 @@
 #include "deck.h"
 #include <array>
 #include <algorithm>
+#include <chrono>
 
 Deck::Deck() noexcept {
     this->reset();
 }
 
 void Deck::reset() noexcept {
-    std::vector<Card> possible_combinations;
     for (int i = 0; i <= CLOVERS; i++) {
         for (int j = 0; j <= ACE; j++) {
             Suit s = static_cast<Suit>(i);
             Rank r = static_cast<Rank>(j);
 
-            possible_combinations.emplace_back(s, r);
+            this->cards.emplace_back(s, r);
         }
     }
-    // std::shuffle
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    while (!possible_combinations.empty()) {
-        std::uniform_int_distribution<> combination_distribution(0, possible_combinations.size() - 1);
-        int index = combination_distribution(gen);
 
-        this->cards.emplace_back(possible_combinations[index]);
-        possible_combinations.erase(possible_combinations.begin() + index);
-    }
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::shuffle(this->cards.begin(), this->cards.end(), std::default_random_engine(seed));
 }
 
 bool Deck::contains(Card const& a) const noexcept {

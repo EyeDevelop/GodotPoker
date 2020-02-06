@@ -18,7 +18,7 @@ double Manager::do_turn(std::vector<Player> &active_players) noexcept {
     double pot_delta = 0;
     for (Player &p : active_players) {
         double ret = p.make_play(pot_delta);
-        if (ret == -2)
+        if (ret == static_cast<double>(Action::FOLD))
             active_players.erase(std::find(active_players.begin(), active_players.end(), p));
         else if (ret > 0)
             pot_delta += ret;
@@ -56,7 +56,7 @@ void Manager::start_game() noexcept {
 
         if (!board_cards.empty()) {
             std::cout << "Cards currently on the table:" << std::endl;
-            for (Card &c : board_cards) {
+            for (Card const &c : board_cards) {
                 std::cout << c.to_string() << " ";
             }
             std::cout << std::endl;
@@ -71,7 +71,6 @@ void Manager::start_game() noexcept {
 
     if (active_players.size() == 1) {
         std::cout << "The winner is: " << active_players[0].get_name() << std::endl;
-        // .front(), doesn't rlly matter
         active_players[0].add_funds(pot);
     } else {
         std::vector<Player> winners = check_win(active_players, board_cards);
@@ -99,7 +98,13 @@ int getCombination(Player const &p, std::vector<Card> &board_cards) {
         Card &c = combinationCards[i];
         std::vector<Card> sub{combinationCards.begin() + i, combinationCards.begin() + i + 5};
 
-        bool straight = std::is_sorted(sub.begin(), sub.end());
+        bool straight = true;
+        int lastRank = sub[0].get_rank();
+        for (int j = 1; j < sub.size(); j++) {
+            straight &= sub[i].get_rank() < lastRank;
+            lastRank = sub[i].get_rank();
+        }
+
         bool flush = Card::same_suit(sub);
         bool royal = c.get_rank() == ACE;
 

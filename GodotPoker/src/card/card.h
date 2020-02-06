@@ -8,14 +8,14 @@
 #include <string>
 #include <array>
 #include <random>
-// enum class
+
 enum Suit {
     HEARTS,
     DIAMONDS,
     SPADES,
     CLOVERS
 };
-// enum class
+
 enum Rank {
     TWO,
     THREE,
@@ -39,7 +39,7 @@ class Card {
 public:
     Card(Suit suit, Rank rank) noexcept;
 
-    Card() noexcept;
+    Card() = default;
 
     bool operator==(Card const &other) const noexcept;
 
@@ -49,9 +49,9 @@ public:
 
     [[nodiscard]] Rank get_rank() const noexcept;
 
-    bool same_suit(Card *o) noexcept;
+    [[nodiscard]] bool same_suit(Card const &o) const noexcept;
 
-    bool same_rank(Card *o) noexcept;
+    [[nodiscard]] bool same_rank(Card const &o) const noexcept;
 
     [[nodiscard]] std::string to_string() const noexcept;
 

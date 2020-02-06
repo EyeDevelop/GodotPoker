@@ -4,21 +4,13 @@
 
 #include <random>
 #include <iostream>
-#include <utility>
 #include "player.h"
 
-// initializer list
-// pass std::string_view / keep like this, either one
-Player::Player(std::string name) noexcept {
-    this->name = std::move(name);
-    this->funds = 0;
-}
+Player::Player(std::string_view name) noexcept
+        : name{name}, funds{0} {}
 
-// same thing
-Player::Player(std::string name, double start_funds) noexcept {
-    this->name = std::move(name);
-    this->funds = start_funds;
-}
+Player::Player(std::string_view name, double start_funds) noexcept
+        : name{name}, funds{start_funds} {}
 
 double Player::get_funds() const noexcept {
     return this->funds;
@@ -51,7 +43,7 @@ void Player::set_in_game() noexcept {
 
 double Player::make_play(double current_pot) noexcept {
     if (!this->inGame) {
-        return -1;
+        return static_cast<double>(Action::NOT_IN_GAME);
     }
 
     std::cout << "Your funds: " << this->funds << std::endl;
@@ -65,25 +57,25 @@ double Player::make_play(double current_pot) noexcept {
     std::cout << "Do you wish to (F)old, (C)heck/call or (R)aise: ";
     std::cin >> option;
 
-    // magic numbers
+    if (option.length() == 0) {
+        std::cerr << "Please enter your move." << std::endl;
+        return make_play(current_pot);
+    }
+
     double raiseAmount = 0;
-    // .at() does bounds checking -> overhead
-    // user operator[]
-    switch(option.at(0)) {
+    switch (option[0]) {
         case 'f':
         case 'F':
-            return -2;
+            return static_cast<double>(Action::FOLD);
 
         case 'c':
         case 'C':
             if (this->funds >= current_pot) {
                 this->funds -= current_pot;
-                return -3;
-            } else if (this->funds == 0) {  // All-In
-                return -3;
+                return static_cast<double>(Action::CHECK);
             } else {
-                std::cerr << "You do not have enough funds." << std::endl;
-                return make_play(current_pot);
+                this->funds = 0;
+                return static_cast<double>(Action::CHECK);
             }
 
         case 'r':
@@ -105,5 +97,5 @@ double Player::make_play(double current_pot) noexcept {
 }
 
 bool Player::operator==(Player const &p) const noexcept {
-    return (*this) == p;
+    return this->name == p.name;
 }

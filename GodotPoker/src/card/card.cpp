@@ -7,22 +7,8 @@
 #include <algorithm>
 #include "card.h"
 
-// These can be initialized in the initializer list
-/*
 Card::Card(const Suit suit, const Rank rank) noexcept
-    : suit{ suit }, rank{ rank } {}
-*/
-Card::Card(Suit suit, Rank rank) noexcept {
-    this->suit = suit;
-    this->rank = rank;
-}
-// same here, why have a defalut ctor when this one is alrdy default?
-// just = default;
-Card::Card() noexcept {
-    this->suit = HEARTS;
-    this->rank = TWO;
-}
-
+        : suit{suit}, rank{rank} {}
 
 Rank Card::get_rank() const noexcept {
     return this->rank;
@@ -31,24 +17,25 @@ Rank Card::get_rank() const noexcept {
 Suit Card::get_suit() const noexcept {
     return this->suit;
 }
-// Card const& and const function
-bool Card::same_rank(Card *o) noexcept {
-    return this->rank == o->rank;
+
+bool Card::same_rank(Card const &o) const noexcept {
+    return this->rank == o.rank;
 }
-// Card const& and const function
-bool Card::same_suit(Card *o) noexcept {
-    return this->suit == o->suit;
+
+bool Card::same_suit(Card const &o) const noexcept {
+    return this->suit == o.suit;
 }
+
 // Constexpr arrays?
 std::string Card::to_string() const noexcept {
-    std::array<std::string, CLOVERS + 1> card_names = {
+    static std::array<std::string, CLOVERS + 1> card_names = {
             "♥",
             "♦",
             "♠",
             "♣"
     };
 
-    std::array<std::string, ACE + 1> rank_names = {
+    static std::array<std::string, ACE + 1> rank_names = {
             "2",
             "3",
             "4",
