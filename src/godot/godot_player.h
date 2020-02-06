@@ -6,5 +6,6 @@
 #define GODOTPOKER_GODOT_POKER_H
 
 #include <Godot.hpp>
+#include <Sprite.hpp>
 
 #endif //GODOTPOKER_GODOT_POKER_H
