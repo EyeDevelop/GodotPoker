@@ -7,11 +7,14 @@
 #include <utility>
 #include "player.h"
 
+// initializer list
+// pass std::string_view / keep like this, either one
 Player::Player(std::string name) noexcept {
     this->name = std::move(name);
     this->funds = 0;
 }
 
+// same thing
 Player::Player(std::string name, double start_funds) noexcept {
     this->name = std::move(name);
     this->funds = start_funds;
@@ -62,7 +65,10 @@ double Player::make_play(double current_pot) noexcept {
     std::cout << "Do you wish to (F)old, (C)heck/call or (R)aise: ";
     std::cin >> option;
 
+    // magic numbers
     double raiseAmount = 0;
+    // .at() does bounds checking -> overhead
+    // user operator[]
     switch(option.at(0)) {
         case 'f':
         case 'F':

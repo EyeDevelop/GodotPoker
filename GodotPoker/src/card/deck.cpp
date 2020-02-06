@@ -20,7 +20,7 @@ void Deck::reset() noexcept {
             possible_combinations.emplace_back(s, r);
         }
     }
-
+    // std::shuffle
     std::random_device rd;
     std::mt19937 gen(rd());
     while (!possible_combinations.empty()) {

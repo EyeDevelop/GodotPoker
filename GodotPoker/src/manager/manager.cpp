@@ -71,6 +71,7 @@ void Manager::start_game() noexcept {
 
     if (active_players.size() == 1) {
         std::cout << "The winner is: " << active_players[0].get_name() << std::endl;
+        // .front(), doesn't rlly matter
         active_players[0].add_funds(pot);
     } else {
         std::vector<Player> winners = check_win(active_players, board_cards);

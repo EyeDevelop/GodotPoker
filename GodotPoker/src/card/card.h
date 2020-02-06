@@ -8,14 +8,14 @@
 #include <string>
 #include <array>
 #include <random>
-
+// enum class
 enum Suit {
     HEARTS,
     DIAMONDS,
     SPADES,
     CLOVERS
 };
-
+// enum class
 enum Rank {
     TWO,
     THREE,
