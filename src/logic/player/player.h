@@ -10,7 +10,7 @@
 #include "../card/card.h"
 
 
-enum class Action : short {
+enum Action {
     CHECK = -3,
     FOLD = -2,
     NOT_IN_GAME = -1

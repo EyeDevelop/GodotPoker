@@ -14,7 +14,7 @@ add_library(godotpoker
         src/logic/card/deck.cpp
         src/logic/player/player.cpp
         src/logic/manager/manager.cpp
-        src/godot/godot_poker.cpp
+        src/godot/godot_player.cpp
         )
 
 add_executable(game
@@ -26,6 +26,14 @@ add_executable(game
 target_link_libraries(godotpoker
         libgodot-linux64.a)
 
-#target_include_directories(godotpoker PRIVATE
-#        godot-cpp/include
-#        godot-cpp/godot_headers)
+target_include_directories(godotpoker PRIVATE
+        godot-cpp/include
+        godot-cpp/include/core
+        godot-cpp/include/gen
+        godot-cpp/godot_headers)
+
+set_target_properties(godotpoker
+        PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/GodotPoker/bin"
+        LIBRARY_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/GodotPoker/bin"
+        RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/GodotPoker/bin")

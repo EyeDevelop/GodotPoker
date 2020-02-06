@@ -18,7 +18,7 @@ double Manager::do_turn(std::vector<Player> &active_players) noexcept {
     double pot_delta = 0;
     for (Player &p : active_players) {
         double ret = p.make_play(pot_delta);
-        if (ret == static_cast<double>(Action::FOLD))
+        if (ret == FOLD)
             active_players.erase(std::find(active_players.begin(), active_players.end(), p));
         else if (ret > 0)
             pot_delta += ret;

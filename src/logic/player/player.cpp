@@ -43,7 +43,7 @@ void Player::set_in_game() noexcept {
 
 double Player::make_play(double current_pot) noexcept {
     if (!this->inGame) {
-        return static_cast<double>(Action::NOT_IN_GAME);
+        return NOT_IN_GAME;
     }
 
     std::cout << "Your funds: " << this->funds << std::endl;
@@ -66,17 +66,17 @@ double Player::make_play(double current_pot) noexcept {
     switch (option[0]) {
         case 'f':
         case 'F':
-            return static_cast<double>(Action::FOLD);
+            return FOLD;
 
         case 'c':
         case 'C':
             if (this->funds >= current_pot) {
                 this->funds -= current_pot;
-                return static_cast<double>(Action::CHECK);
             } else {
                 this->funds = 0;
-                return static_cast<double>(Action::CHECK);
             }
+
+            return CHECK;
 
         case 'r':
         case 'R':
