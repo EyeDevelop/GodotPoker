@@ -13,7 +13,7 @@ enum Suit {
     HEARTS,
     DIAMONDS,
     SPADES,
-    CLOVERS
+    CLUBS
 };
 
 enum Rank {

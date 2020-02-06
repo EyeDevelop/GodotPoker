@@ -12,7 +12,7 @@ Deck::Deck() noexcept {
 }
 
 void Deck::reset() noexcept {
-    for (int i = 0; i <= CLOVERS; i++) {
+    for (int i = 0; i <= CLUBS; i++) {
         for (int j = 0; j <= ACE; j++) {
             Suit s = static_cast<Suit>(i);
             Rank r = static_cast<Rank>(j);

@@ -28,7 +28,7 @@ bool Card::same_suit(Card const &o) const noexcept {
 
 // Constexpr arrays?
 std::string Card::to_string() const noexcept {
-    static std::array<std::string, CLOVERS + 1> card_names = {
+    static std::array<std::string, CLUBS + 1> card_names = {
             "♥",
             "♦",
             "♠",
@@ -65,7 +65,7 @@ bool Card::operator<(Card const &other) const noexcept {
 Card Card::generate_random() noexcept {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> suit_distribution(0, CLOVERS);
+    std::uniform_int_distribution<> suit_distribution(0, CLUBS);
     std::uniform_int_distribution<> rank_distribution(0, ACE);
 
     Suit s = static_cast<Suit>(suit_distribution(gen));
@@ -98,7 +98,7 @@ int Card::count_rank(std::vector<Card> const &cards, Rank r) noexcept {
 
 int Card::get_max_suit_count(std::vector<Card> const &cards) noexcept {
     int maxCount = 0;
-    for (int i = HEARTS; i <= CLOVERS; i++) {
+    for (int i = HEARTS; i <= CLUBS; i++) {
         Suit s = static_cast<Suit>(i);
         int suitCount = count_suit(cards, s);
         maxCount = std::max(suitCount, maxCount);
