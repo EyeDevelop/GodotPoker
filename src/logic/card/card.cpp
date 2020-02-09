@@ -83,6 +83,46 @@ std::string Card::to_string() const noexcept {
     return card_names[this->suit] + rank_names[this->rank];
 }
 
+std::optional<Card> Card::from_string(std::string str) noexcept {
+    static std::unordered_map<std::string, Suit> suit_str = {
+            {"♥", HEARTS},
+            {"H", HEARTS},
+
+            {"♦", DIAMONDS},
+            {"D", DIAMONDS},
+
+            {"♠", SPADES},
+            {"S", SPADES},
+
+            {"♣", CLUBS},
+            {"C", CLUBS}
+    };
+
+    static std::unordered_map<std::string, Rank> rank_str = {
+            {"2",  TWO},
+            {"3",  THREE},
+            {"4",  FOUR},
+            {"5",  FIVE},
+            {"6",  SIX},
+            {"7",  SEVEN},
+            {"8",  EIGHT},
+            {"9",  NINE},
+            {"10", TEN},
+            {"J",  JACK},
+            {"Q",  QUEEN},
+            {"K",  KING},
+            {"A",  ACE}
+    };
+
+    std::string s = std::string(1, str[0]);
+    std::string r = str.substr(1, str.length());
+
+    if (suit_str.find(s) == suit_str.end() || rank_str.find(r) == rank_str.end())
+        return std::nullopt;
+
+    return {suit_str[s], rank_str[r]}
+}
+
 /**
  * Checks if two cards are the same.
  * Same rank and same suit.

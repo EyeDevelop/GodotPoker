@@ -55,6 +55,8 @@ public:
 
     [[nodiscard]] std::string to_string() const noexcept;
 
+    static Card from_string(std::string str) noexcept;
+
     static Card generate_random() noexcept;
 
     static bool same_suit(std::vector<Card> const &cards) noexcept;
