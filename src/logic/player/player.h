@@ -11,6 +11,7 @@
 
 
 enum Action {
+    ALL_IN = -4,
     CHECK = -3,
     FOLD = -2,
     NOT_IN_GAME = -1
@@ -42,6 +43,12 @@ public:
     void set_in_game() noexcept;
 
     void reset_in_game() noexcept;
+
+    double fold() noexcept;
+
+    double check(double current_pot) noexcept;
+
+    double raise(double current_pot, double raise_amount) noexcept;
 
     double make_play(double current_pot) noexcept;
 };

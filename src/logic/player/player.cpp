@@ -4,6 +4,8 @@
 
 #include <random>
 #include <iostream>
+#include <thread>
+#include <chrono>
 #include "player.h"
 
 Player::Player(std::string_view name) noexcept
@@ -76,6 +78,44 @@ void Player::set_in_game() noexcept {
     this->inGame = true;
 }
 
+double Player::fold() noexcept {
+    if (!this->inGame)
+        return NOT_IN_GAME;
+
+    return FOLD;
+}
+
+double Player::check(double current_pot) noexcept {
+    if (!this->inGame)
+        return NOT_IN_GAME;
+
+    // Check if we go all-in or no.
+    if (this->funds >= current_pot) {
+        this->funds -= current_pot;
+    } else {
+        this->funds = 0;
+        return ALL_IN;
+    }
+
+    return CHECK;
+}
+
+double Player::raise(double current_pot, double raise_amount) noexcept {
+    if (!this->inGame)
+        return NOT_IN_GAME;
+
+    // Perform the raise after checking if there are enough funds, otherwise go all-in.
+    if (raise_amount > 0) {
+        if (this->funds <= current_pot + raise_amount)
+            return ALL_IN;
+
+        this->funds -= raise_amount + current_pot;
+        return raise_amount;
+    }
+
+    return 0;
+}
+
 /**
  * Asks the player for a move.
  *
@@ -89,10 +129,19 @@ double Player::make_play(double current_pot) noexcept {
 
     std::cout << "\nYour funds: " << this->funds << std::endl;
     std::cout << "Your cards: ";
+    std::string card_str;
     for (const Card &c : this->cards) {
-        std::cout << c.to_string() << " ";
+        card_str += c.to_string() + " ";
     }
-    std::cout << std::endl;
+    std::string hidden = std::string(6, '\b') +
+            std::string(4, '*');
+
+    // Show for two seconds, then remove.
+    std::cout << card_str;
+    std::cout.flush();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    std::cout << hidden << std::endl;
 
     std::string option;
     std::cout << "Do you wish to (F)old, (C)heck/call or (R)aise: ";
@@ -103,37 +152,33 @@ double Player::make_play(double current_pot) noexcept {
         return make_play(current_pot);
     }
 
-    double raiseAmount = 0;
     switch (option[0]) {
         case 'f':
         case 'F':
-            return FOLD;
+            return fold();
 
         case 'c':
         case 'C':
-            if (this->funds >= current_pot) {
-                this->funds -= current_pot;
-            } else {
-                this->funds = 0;
-            }
-
-            return CHECK;
+            return check(current_pot);
 
         case 'r':
-        case 'R':
+        case 'R': {
+            double raise_amount = 0;
             std::cout << "Raise by how much: ";
-            std::cin >> raiseAmount;
-            if (raiseAmount > 0 && this->funds >= raiseAmount + current_pot) {
-                this->funds -= raiseAmount + current_pot;
-                return raiseAmount;
-            } else {
-                std::cerr << "You do not have enough funds." << std::endl;
+            std::cin >> raise_amount;
+
+            if (raise_amount == 0) {
+                std::cerr << "That's not a valid amount." << std::endl;
                 return make_play(current_pot);
             }
 
-        default:
-            std::cerr << "That's not a valid option." << std::endl;
+            return raise(current_pot, raise_amount);
+        }
+
+        default: {
+            std::cerr << "That's not a valid choice." << std::endl;
             return make_play(current_pot);
+        }
     }
 }
 
