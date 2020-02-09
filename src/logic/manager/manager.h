@@ -19,7 +19,10 @@ public:
 
     void remove_player(Player * p) noexcept;
 
-    double do_turn(std::vector<Player*> &active_players) noexcept;
+    double do_turn(std::vector<Player *> &folded_players);
+
+    double do_turn(std::vector<Player *> &folded_players, std::optional<std::string_view> raiser,
+                   std::optional<double> raise_amount, std::optional<size_t> rotate_offset) noexcept;
 
     void start_game() noexcept;
 

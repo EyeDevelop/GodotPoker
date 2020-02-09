@@ -12,7 +12,7 @@
  *
  * @param p The player to add.
  */
-void Manager::add_player(Player * const p) noexcept {
+void Manager::add_player(Player *const p) noexcept {
     this->players.push_back(p);
 }
 
@@ -21,7 +21,7 @@ void Manager::add_player(Player * const p) noexcept {
  *
  * @param p The player to remove.
  */
-void Manager::remove_player(Player * const p) noexcept {
+void Manager::remove_player(Player *const p) noexcept {
     this->players.erase(std::find(this->players.begin(), this->players.end(), p));
 }
 
@@ -31,23 +31,51 @@ void Manager::remove_player(Player * const p) noexcept {
  * @param folded_players The players who have folded before this round.
  * @return The pot delta after the round.
  */
-double Manager::do_turn(std::vector<Player *> &folded_players) noexcept {
+double Manager::do_turn(std::vector<Player *> &folded_players) {
+    return do_turn(folded_players, std::nullopt, 0, std::nullopt);
+}
+
+double Manager::do_turn(std::vector<Player *> &folded_players, std::optional<std::string_view> raiser,
+                        std::optional<double> raise_amount, std::optional<size_t> rotate_offset) noexcept {
     double pot_delta = 0;
-    for (Player *p: this->players) {
+    std::vector<Player *> round_players = this->players;
+
+    if (rotate_offset)
+        std::rotate(round_players.begin(), round_players.begin() + rotate_offset.value() + 1, round_players.end());
+
+    for (int i = 0; i < round_players.size(); i++) {
+        // Get the current player.
+        Player * p = round_players[i];
+
+        // Check if the player folded.
         bool folded = false;
-        for (Player * foldedP : folded_players) {
-            if (p->get_name() == foldedP->get_name())
+        for (Player *foldedP : folded_players) {
+            if (p->get_name() == foldedP->get_name()) {
                 folded = true;
+                break;
+            }
         }
 
+        // If they folded, they can't play.
         if (folded)
             continue;
 
+        // Check if there has been raised and we've come circle.
+        if (raiser && p->get_name() == raiser.value())
+            break;
+
+        // Let the player make a play.
         double ret = p->make_play(pot_delta);
-        if (ret == FOLD)
+        if (ret == FOLD) {
             folded_players.push_back(p);
-        else if (ret > 0)
+        } else if (ret > 0) {
             pot_delta += ret;
+
+            // Start a _round_ where the player raised.
+            if (raise_amount && ret > raise_amount.value()) {
+                return pot_delta + do_turn(folded_players, p->get_name(), ret, i);
+            }
+        }
     }
 
     return pot_delta;
@@ -63,7 +91,7 @@ double Manager::do_turn(std::vector<Player *> &folded_players) noexcept {
  */
 void Manager::start_game() noexcept {
     // Sets the players in-game and gives them cards.
-    for (Player * const p : players) {
+    for (Player *const p : players) {
         p->set_in_game();
         p->give_card(this->deck.next_card());
         p->give_card(this->deck.next_card());
@@ -73,7 +101,7 @@ void Manager::start_game() noexcept {
     double pot = 0;
 
     std::vector<Card> board_cards;
-    std::vector<Player*> folded_players;
+    std::vector<Player *> folded_players;
 
     // Keeps running the game until it's over or
     // all players folded.
@@ -96,15 +124,16 @@ void Manager::start_game() noexcept {
             std::cout << std::endl;
         }
 
-        pot = do_turn(folded_players);
+        pot += do_turn(folded_players);
         if (folded_players.size() == this->players.size() - 1)
             break;
 
         turnCount++;
     }
 
-    std::vector<Player*> active_players;
-    std::set_difference(this->players.begin(), this->players.end(), folded_players.begin(), folded_players.end(), std::back_inserter(active_players));
+    std::vector<Player *> active_players;
+    std::set_difference(this->players.begin(), this->players.end(), folded_players.begin(), folded_players.end(),
+                        std::back_inserter(active_players));
 
     // Calculate a winner and give them their prize money.
     // Or share it among a group of winners (same combo).
@@ -112,16 +141,16 @@ void Manager::start_game() noexcept {
         std::cout << "\nThe winner is: " << active_players[0]->get_name() << std::endl;
         active_players[0]->add_funds(pot);
     } else {
-        std::vector<Player*> winners = check_win(active_players, board_cards);
+        std::vector<Player *> winners = check_win(active_players, board_cards);
         std::cout << "\nThe winners are: " << std::endl;
-        for (Player * const p : winners) {
+        for (Player *const p : winners) {
             std::cout << "- " << p->get_name() << std::endl;
             p->add_funds(pot / winners.size());
         }
     }
 
     // Reset the player's in-game status.
-    for (Player * const p : players)
+    for (Player *const p : players)
         p->reset_in_game();
 
     // Reset the deck.
@@ -136,7 +165,8 @@ void Manager::start_game() noexcept {
  * @param board_cards The cards on the table.
  * @return A vector of winners.
  */
-std::vector<Player *> Manager::check_win(std::vector<Player*> const &active_players, std::vector<Card> const &board_cards) noexcept {
+std::vector<Player *>
+Manager::check_win(std::vector<Player *> const &active_players, std::vector<Card> const &board_cards) noexcept {
     std::vector<Player *> winners;
     int highestScore = 0;
 
