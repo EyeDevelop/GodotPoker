@@ -14,7 +14,6 @@ add_library(godotpoker
         src/logic/card/deck.cpp
         src/logic/player/player.cpp
         src/logic/manager/manager.cpp
-        src/godot/godot_player.cpp
         )
 
 add_executable(game
