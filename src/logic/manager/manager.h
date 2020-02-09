@@ -11,19 +11,19 @@
 #include "../card/deck.h"
 
 class Manager {
-    std::vector<Player> players;
+    std::vector<Player*> players;
     Deck deck;
 
 public:
-    void add_player(Player const &p) noexcept;
+    void add_player(Player * p) noexcept;
 
-    void remove_player(Player const &p) noexcept;
+    void remove_player(Player * p) noexcept;
 
-    static double do_turn(std::vector<Player> &active_players) noexcept;
+    double do_turn(std::vector<Player*> &active_players) noexcept;
 
     void start_game() noexcept;
 
-    static std::vector<Player> check_win(std::vector<Player> &active_players, std::vector<Card> &board_cards) noexcept;
+    static std::vector<Player*> check_win(std::vector<Player*> const &active_players, std::vector<Card> const &board_cards) noexcept;
 };
 
 
