@@ -120,7 +120,7 @@ std::optional<Card> Card::from_string(std::string str) noexcept {
     if (suit_str.find(s) == suit_str.end() || rank_str.find(r) == rank_str.end())
         return std::nullopt;
 
-    return {suit_str[s], rank_str[r]}
+    return std::optional{Card(suit_str[s], rank_str[r])};
 }
 
 /**

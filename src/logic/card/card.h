@@ -8,6 +8,7 @@
 #include <string>
 #include <array>
 #include <random>
+#include <optional>
 
 enum Suit {
     HEARTS,
@@ -55,7 +56,7 @@ public:
 
     [[nodiscard]] std::string to_string() const noexcept;
 
-    static Card from_string(std::string str) noexcept;
+    static std::optional<Card> from_string(std::string str) noexcept;
 
     static Card generate_random() noexcept;
 
