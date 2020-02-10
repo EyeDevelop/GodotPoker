@@ -35,7 +35,7 @@ void Deck::reset() noexcept {
  * @param a A card.
  * @return True if a is in this deck.
  */
-bool Deck::contains(Card const& a) const noexcept {
+bool Deck::contains(Card const &a) const noexcept {
     return std::find(cards.begin(), cards.end(), a) != cards.end();
 }
 
@@ -44,7 +44,7 @@ bool Deck::contains(Card const& a) const noexcept {
  *
  * @param a A card.
  */
-void Deck::remove(Card const& a) noexcept {
+void Deck::remove(Card const &a) noexcept {
     cards.erase(std::find(cards.begin(), cards.end(), a));
 }
 
@@ -64,6 +64,6 @@ Card Deck::next_card() noexcept {
  *
  * @return A vector of cards in this deck.
  */
-std::vector<Card> const& Deck::get_cards() noexcept {
+std::vector<Card> const &Deck::get_cards() noexcept {
     return cards;
 }

@@ -23,7 +23,7 @@ public:
 
     Card next_card() noexcept;
 
-    std::vector<Card> const& get_cards() noexcept;
+    std::vector<Card> const &get_cards() noexcept;
 };
 
 #endif //GODOTPOKER_DECK_H

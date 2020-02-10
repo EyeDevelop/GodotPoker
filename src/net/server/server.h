@@ -9,7 +9,9 @@
 
 class Server {
     boost::asio::ip::tcp::acceptor acceptor_;
+
     void start_accept();
+
     void handle_accept(tcp_connection::pointer new_conn, const boost::system::error_code &error);
 
 public:

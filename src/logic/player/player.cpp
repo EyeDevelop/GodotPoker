@@ -134,7 +134,7 @@ double Player::make_play(double current_pot) noexcept {
         card_str += c.to_string() + " ";
     }
     std::string hidden = std::string(6, '\b') +
-            std::string(4, '*');
+                         std::string(4, '*');
 
     // Show for two seconds, then remove.
     std::cout << card_str;

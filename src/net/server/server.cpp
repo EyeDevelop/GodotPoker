@@ -29,7 +29,8 @@ int main() {
 
 void Server::start_accept() {
     tcp_connection::pointer new_conn = tcp_connection::create(acceptor_.get_executor().context());
-    acceptor_.async_accept(new_conn->socket(), boost::bind(&Server::handle_accept, this, new_conn, boost::asio::placeholders::error));
+    acceptor_.async_accept(new_conn->socket(),
+                           boost::bind(&Server::handle_accept, this, new_conn, boost::asio::placeholders::error));
 }
 
 void Server::handle_accept(tcp_connection::pointer new_conn, const boost::system::error_code &error) {

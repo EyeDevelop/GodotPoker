@@ -45,7 +45,7 @@ double Manager::do_turn(std::vector<Player *> &folded_players, std::optional<std
 
     for (int i = 0; i < round_players.size(); i++) {
         // Get the current player.
-        Player * p = round_players[i];
+        Player *p = round_players[i];
 
         // Check if the player folded.
         bool folded = false;
