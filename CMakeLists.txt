@@ -20,10 +20,15 @@ add_executable(game
         src/logic/card/card.cpp
         src/logic/card/deck.cpp
         src/logic/player/player.cpp
-        src/logic/manager/manager.cpp)
+        src/logic/manager/manager.cpp
+        src/logic/model.cpp
+        src/net/client/client.cpp)
 
 target_link_libraries(godotpoker
         libgodot-linux64.a)
+
+target_link_libraries(game PRIVATE
+        PocoNet)
 
 target_include_directories(godotpoker PRIVATE
         godot-cpp/include
