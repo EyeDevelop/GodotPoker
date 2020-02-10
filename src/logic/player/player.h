@@ -20,13 +20,16 @@ enum Action {
 class Player {
     double funds;
     std::vector<Card> cards;
-    bool inGame = false;
+    bool in_game = false;
+    bool networked = false;
     std::string name;
 
 public:
     explicit Player(std::string_view name) noexcept;
 
     Player(std::string_view name, double start_funds) noexcept;
+
+    Player(std::string_view name, double start_funds, bool networked) noexcept;
 
     bool operator==(Player const &p) const noexcept;
 
@@ -51,6 +54,10 @@ public:
     double raise(double current_pot, double raise_amount) noexcept;
 
     double make_play(double current_pot) noexcept;
+
+    double make_play_cli(double current_pot) noexcept;
+
+    double make_play_net(double current_pot, Action a, double amount) noexcept;
 };
 
 

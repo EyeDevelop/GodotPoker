@@ -7,12 +7,16 @@
 #include <thread>
 #include <chrono>
 #include "player.h"
+#include "../../net/client/client.h"
 
 Player::Player(std::string_view name) noexcept
         : name{name}, funds{0} {}
 
 Player::Player(std::string_view name, double start_funds) noexcept
         : name{name}, funds{start_funds} {}
+
+Player::Player(std::string_view name, double start_funds, bool networked) noexcept
+        : name{name}, funds{start_funds}, networked{networked} {}
 
 /**
  * Gets the amount of funds this player has.
@@ -67,7 +71,7 @@ void Player::give_card(Card c) noexcept {
  */
 void Player::reset_in_game() noexcept {
     this->cards.clear();
-    this->inGame = false;
+    this->in_game = false;
 }
 
 /**
@@ -75,18 +79,18 @@ void Player::reset_in_game() noexcept {
  */
 void Player::set_in_game() noexcept {
     this->cards.clear();
-    this->inGame = true;
+    this->in_game = true;
 }
 
 double Player::fold() noexcept {
-    if (!this->inGame)
+    if (!this->in_game)
         return NOT_IN_GAME;
 
     return FOLD;
 }
 
 double Player::check(double current_pot) noexcept {
-    if (!this->inGame)
+    if (!this->in_game)
         return NOT_IN_GAME;
 
     // Check if we go all-in or no.
@@ -101,7 +105,7 @@ double Player::check(double current_pot) noexcept {
 }
 
 double Player::raise(double current_pot, double raise_amount) noexcept {
-    if (!this->inGame)
+    if (!this->in_game)
         return NOT_IN_GAME;
 
     // Perform the raise after checking if there are enough funds, otherwise go all-in.
@@ -116,14 +120,21 @@ double Player::raise(double current_pot, double raise_amount) noexcept {
     return 0;
 }
 
+double Player::make_play(double current_pot) noexcept {
+//    if (networked)
+//        return make_play_net(current_pot);
+
+    return make_play_cli(current_pot);
+}
+
 /**
  * Asks the player for a move.
  *
  * @param current_pot The amount of money currently on the table.
  * @return The move of the player.
  */
-double Player::make_play(double current_pot) noexcept {
-    if (!this->inGame) {
+double Player::make_play_cli(double current_pot) noexcept {
+    if (!this->in_game) {
         return NOT_IN_GAME;
     }
 
@@ -179,6 +190,22 @@ double Player::make_play(double current_pot) noexcept {
             std::cerr << "That's not a valid choice." << std::endl;
             return make_play(current_pot);
         }
+    }
+}
+
+double Player::make_play_net(double current_pot, Action a, double amount) noexcept {
+    if (!this->in_game)
+        return NOT_IN_GAME;
+
+    switch (a) {
+        case FOLD:
+            return fold();
+
+        case CHECK:
+            return check(current_pot);
+
+        default:
+            return raise(current_pot, amount);
     }
 }
 

@@ -25,66 +25,66 @@ void Manager::remove_player(Player *const p) noexcept {
     this->players.erase(std::find(this->players.begin(), this->players.end(), p));
 }
 
-/**
- * Does exactly one round of poker.
- *
- * @param folded_players The players who have folded before this round.
- * @return The pot delta after the round.
- */
-double Manager::do_turn(std::vector<Player *> &folded_players) {
-    return do_turn(folded_players, std::nullopt, 0, std::nullopt);
-}
+void Manager::next_play() noexcept {
+    Player *p_current_player = get_current_player();
 
-double Manager::do_turn(std::vector<Player *> &folded_players, std::optional<std::string_view> raiser,
-                        std::optional<double> raise_amount, std::optional<size_t> rotate_offset) noexcept {
-    double pot_delta = 0;
-    std::vector<Player *> round_players = this->players;
-
-    if (rotate_offset)
-        std::rotate(round_players.begin(), round_players.begin() + rotate_offset.value() + 1, round_players.end());
-
-    for (int i = 0; i < round_players.size(); i++) {
-        // Get the current player.
-        Player *p = round_players[i];
-
-        // Check if the player folded.
-        bool folded = false;
-        for (Player *foldedP : folded_players) {
-            if (p->get_name() == foldedP->get_name()) {
-                folded = true;
-                break;
-            }
-        }
-
-        // If they folded, they can't play.
-        if (folded)
-            continue;
-
-        // Check if there has been raised and we've come circle.
-        if (raiser && p->get_name() == raiser.value())
-            break;
-
-        // Let the player make a play.
-        double ret = p->make_play(pot_delta);
-        if (ret == FOLD) {
-            folded_players.push_back(p);
-        } else if (ret > 0) {
-            pot_delta += ret;
-
-            // Start a _round_ where the player raised.
-            if (raise_amount && ret > raise_amount.value()) {
-                return pot_delta + do_turn(folded_players, p->get_name(), ret, i);
-            }
+    // Check if the player has folded before.
+    bool folded = false;
+    for (Player *const p : folded_players) {
+        if (p->get_name() == p_current_player->get_name()) {
+            folded = true;
         }
     }
 
-    return pot_delta;
+    // Increment current player.
+    if (folded) {
+        this->current_player = (this->current_player + 1) % this->players.size();
+        return;
+    }
+
+    // Check if a round has been concluded.
+    if (current_player == round_end_at) {
+        this->biggest_raise = 0;
+        this->next_round();
+    }
+
+    // Let the player make their move.
+    double delta = p_current_player->make_play(this->pot);
+    if (delta == FOLD) {
+        folded_players.push_back(p_current_player);
+    } else if (delta > 0) {
+        this->pot += delta;
+
+        if (delta > biggest_raise)
+            this->round_end_at = this->current_player;
+    }
+
+    // Increment player.
+    this->current_player = (this->current_player + 1) % this->players.size();
+}
+
+void Manager::next_round() noexcept {
+    if (this->round_num >= 5) {
+        this->active = false;
+        return;
+    }
+
+    if (this->round_num == 1) {
+        for (int i = 0; i < 3; i++) {
+            this->table_cards.push_back(this->deck.next_card());
+        }
+    } else if (this->round_num > 1) {
+        this->table_cards.push_back(this->deck.next_card());
+    }
+
+    this->round_num ++;
+    this->round_end_at = 0;
 }
 
 /**
  * Starts a whole game of Poker.
  * First enlists all players in the game, gives them cards,
- * then runs do_turn() until the game is over.
+ * then runs next_play() until the game is over.
  *
  * After all this, the winner is calculated and gets the pot
  * added to their funds.
@@ -97,40 +97,11 @@ void Manager::start_game() noexcept {
         p->give_card(this->deck.next_card());
     }
 
-    int turnCount = 0;
-    double pot = 0;
+    // Make moves.
+    while (active)
+        this->next_play();
 
-    std::vector<Card> board_cards;
-    std::vector<Player *> folded_players;
-
-    // Keeps running the game until it's over or
-    // all players folded.
-    while (turnCount < 4 && this->players.size() > 1) {
-        std::cout << "\nCurrently in the pot: " << pot << std::endl;
-
-        if (turnCount == 1) {
-            for (int i = 0; i < 3; i++) {
-                board_cards.push_back(deck.next_card());
-            }
-        } else if (turnCount > 1) {
-            board_cards.push_back(deck.next_card());
-        }
-
-        if (!board_cards.empty()) {
-            std::cout << "Cards currently on the table:\n" << std::endl;
-            for (Card const &c : board_cards) {
-                std::cout << c.to_string() << " ";
-            }
-            std::cout << std::endl;
-        }
-
-        pot += do_turn(folded_players);
-        if (folded_players.size() == this->players.size() - 1)
-            break;
-
-        turnCount++;
-    }
-
+    // Get the players still active in the game.
     std::vector<Player *> active_players;
     std::set_difference(this->players.begin(), this->players.end(), folded_players.begin(), folded_players.end(),
                         std::back_inserter(active_players));
@@ -141,7 +112,7 @@ void Manager::start_game() noexcept {
         std::cout << "\nThe winner is: " << active_players[0]->get_name() << std::endl;
         active_players[0]->add_funds(pot);
     } else {
-        std::vector<Player *> winners = check_win(active_players, board_cards);
+        std::vector<Player *> winners = check_win(active_players, table_cards);
         std::cout << "\nThe winners are: " << std::endl;
         for (Player *const p : winners) {
             std::cout << "- " << p->get_name() << std::endl;
@@ -185,15 +156,23 @@ Manager::check_win(std::vector<Player *> const &active_players, std::vector<Card
     return winners;
 }
 
+std::vector<Player *> &Manager::get_players() noexcept {
+    return players;
+}
+
+Player *Manager::get_current_player() {
+    return this->players[current_player];
+}
+
 int main() {
     Manager m{};
     Player p{"Hans", 1200};
     Player p2{"John", 1200};
-    Player p3{"Rutger", 1200};
+//    Player p3{"Rutger", 1200};
 
     m.add_player(&p);
     m.add_player(&p2);
-    m.add_player(&p3);
+//    m.add_player(&p3);
 
     m.start_game();
 

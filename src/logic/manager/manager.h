@@ -12,6 +12,19 @@
 
 class Manager {
     std::vector<Player *> players;
+    std::vector<Player *> folded_players;
+
+    std::vector<Card> table_cards;
+
+    size_t current_player = 0;
+    size_t round_end_at = 0;
+    size_t round_num = 0;
+
+    double biggest_raise = 0;
+    double pot = 0;
+
+    bool active = true;
+
     Deck deck;
 
 public:
@@ -19,12 +32,15 @@ public:
 
     void remove_player(Player *p) noexcept;
 
-    double do_turn(std::vector<Player *> &folded_players);
+    std::vector<Player *> &get_players() noexcept;
 
-    double do_turn(std::vector<Player *> &folded_players, std::optional<std::string_view> raiser,
-                   std::optional<double> raise_amount, std::optional<size_t> rotate_offset) noexcept;
+    void next_play() noexcept;
+
+    void next_round() noexcept;
 
     void start_game() noexcept;
+
+    Player * get_current_player();
 
     static std::vector<Player *>
     check_win(std::vector<Player *> const &active_players, std::vector<Card> const &board_cards) noexcept;
