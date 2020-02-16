@@ -222,14 +222,14 @@ int Card::count_rank(std::vector<Card> const &cards, Rank r) noexcept {
  * @return The frequency of the most occurring suit in cards.
  */
 int Card::get_max_suit_count(std::vector<Card> const &cards) noexcept {
-    int maxCount = 0;
+    int max_suit_count = 0;
     for (int i = HEARTS; i <= CLUBS; i++) {
         Suit s = static_cast<Suit>(i);
         int suitCount = count_suit(cards, s);
-        maxCount = std::max(suitCount, maxCount);
+        max_suit_count = std::max(suitCount, max_suit_count);
     }
 
-    return maxCount;
+    return max_suit_count;
 }
 
 /**
@@ -239,17 +239,22 @@ int Card::get_max_suit_count(std::vector<Card> const &cards) noexcept {
  * Used for retrieving pairs, 3 of a kinds and 4 of a kinds.
  *
  * @param cards The vector of cards.
+ * @param to_set Reference to rank object to set to the rank of the highest count.
  * @return The frequency of the most occurring rank in cards.
  */
-int Card::get_max_rank_count(std::vector<Card> const &cards) noexcept {
-    int maxCount = 0;
+int Card::get_max_rank_count(std::vector<Card> const &cards, Rank &to_set) noexcept {
+    int best_rank_count = 0;
     for (int i = TWO; i <= ACE; i++) {
         Rank r = static_cast<Rank>(i);
-        int rankCount = count_rank(cards, r);
-        maxCount = std::max(rankCount, maxCount);
+        int rank_count = count_rank(cards, r);
+
+        if (rank_count > best_rank_count) {
+            best_rank_count = rank_count;
+            to_set = r;
+        }
     }
 
-    return maxCount;
+    return best_rank_count;
 }
 
 /**

@@ -70,7 +70,7 @@ public:
 
     static int get_max_suit_count(std::vector<Card> const &cards) noexcept;
 
-    static int get_max_rank_count(std::vector<Card> const &cards) noexcept;
+    static int get_max_rank_count(std::vector<Card> const &cards, Rank &to_set) noexcept;
 
     static std::vector<Rank> get_pairs(std::vector<Card> const &cards) noexcept;
 };
