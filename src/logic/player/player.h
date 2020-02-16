@@ -18,10 +18,14 @@ enum Action {
 };
 
 class Player {
-    double funds;
+    double funds = 0;
+
     std::vector<Card> cards;
+    std::vector<Card> *table_cards;
+
     bool in_game = false;
     bool networked = false;
+
     std::string name;
 
 public:
@@ -43,21 +47,21 @@ public:
 
     void give_card(Card c) noexcept;
 
-    void set_in_game() noexcept;
+    void set_in_game(std::vector<Card> *t_cards) noexcept;
 
     void reset_in_game() noexcept;
 
     double fold() noexcept;
 
-    double check(double current_pot) noexcept;
+    double check(double to_check) noexcept;
 
-    double raise(double current_pot, double raise_amount) noexcept;
+    double raise(double to_check, double raise_amount) noexcept;
 
-    double make_play(double current_pot) noexcept;
+    double make_play(double current_pot, double to_check) noexcept;
 
-    double make_play_cli(double current_pot) noexcept;
+    double make_play_cli(double current_pot, double to_check) noexcept;
 
-    double make_play_net(double current_pot, Action a, double amount) noexcept;
+    double make_play_net(double to_check, Action a, double amount) noexcept;
 };
 
 
