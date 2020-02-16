@@ -9,7 +9,7 @@ set(SOURCE_FILES src)
 set(CMAKE_CXX_COMPILER /usr/bin/clang++)
 set(CMAKE_C_COMPILER /usr/bin/clang)
 
-add_library(godotpoker
+add_library(godotpoker STATIC
         src/logic/card/card.cpp
         src/logic/card/deck.cpp
         src/logic/player/player.cpp
