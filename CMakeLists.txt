@@ -21,7 +21,6 @@ add_executable(game
         src/logic/card/deck.cpp
         src/logic/player/player.cpp
         src/logic/manager/manager.cpp
-        src/logic/model.cpp
         src/net/client/client.cpp)
 
 target_link_libraries(godotpoker
